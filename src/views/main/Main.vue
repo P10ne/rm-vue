@@ -1,17 +1,14 @@
 <template>
+  <h1>Main</h1>
   <router-view></router-view>
-  <ul>
-    <li>asdf</li>
-    <li>asdf</li>
-  </ul>
 </template>
 
-<script>
+<script lang='ts'>
 export default {
 
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 
 </style>
