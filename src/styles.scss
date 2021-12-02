@@ -2,12 +2,6 @@
 @import './assets/font-icons/fonts.css';
 
 /* Resets */
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
 ol, ul {
   list-style: none;
 }
@@ -18,3 +12,17 @@ ol, ul {
 }
 
 /* /Resets */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+  font-size: 1px;
+}
+
+body {
+  font-size: 16rem;
+}
