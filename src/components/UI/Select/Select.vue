@@ -1,16 +1,28 @@
 <template>
   <span class="Select" :class="classes" @click="onClick">
     <span class="Select__control">
-      <span class="Select__value">
-        {{ selectValue }}
+
+      <span class="Select__label">
+        <span class="Select__value" v-if="modelValue">
+          {{ selectedValue }}
+        </span>
+        <span class="Select__placeholder" v-else>
+          {{ placeholder }}
+        </span>
       </span>
+
       <Icon name="arrow-down" class="Select__arrow" />
     </span>
+
+    <div class="Select__options" v-if="isActive" @click.stop>
+      <slot></slot>
+    </div>
+
   </span>
 </template>
 
 <script lang='ts'>
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, PropType, provide } from 'vue';
 import Icon from '../Icon.vue';
 
 export default defineComponent({
@@ -23,14 +35,14 @@ export default defineComponent({
       default: 'Выберите значение'
     },
     modelValue: Object,
-    mapSelectValue: {
+    mapSelectedValue: {
       type: Function as PropType<(modelValue: unknown) => string>,
       default: (modelValue: unknown) => modelValue
     }
   },
   data () {
     return {
-      isActive: true
+      isActive: false
     }
   },
   computed: {
@@ -39,20 +51,19 @@ export default defineComponent({
         'Select--active': this.isActive
       }
     },
-    selectValue (): string {
+    selectedValue (): string {
       return this.modelValue
-        ? this.mapSelectValue(this.modelValue)
-        : this.placeholder
-    }
-  },
-  watch: {
-    isActive (isActive) {
-      console.log(isActive);
+        ? this.mapSelectedValue(this.modelValue)
+        : ''
     }
   },
   methods: {
     onClick () {
       this.isActive = !this.isActive;
+    },
+    setOption (value: any) {
+      this.$emit('update:modelValue', value);
+      this.isActive = false;
     }
   }
 })
@@ -62,21 +73,32 @@ export default defineComponent({
   $side-padding: 20rem;
   $control-class: '.Select__control';
   $arrow-class: '.Select__arrow';
+  $active-class: '.Select--active';
   .Select {
+    position: relative;
     display: inline-block;
     cursor: pointer;
-    &:hover {
+    &:hover:not(#{$active-class}) {
       #{$control-class} {
         border: 1px solid rgba(0, 0, 0, 0.45);
       }
     }
-    &--active {
-      #{$control-class} {
-        border: 1px solid #00A3FF;
-      }
-      #{$arrow-class} {
-        transform: translateY(-50%) rotate(180deg);
-      }
+    &__options {
+      position: absolute;
+      top: 110%;
+      right: 0;
+      display: inline-block;
+      min-width: 150rem;
+      background: #F7F7F7;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.25);
+      border-radius: 5px;
+    }
+    &__label {
+      font-weight: 500;
+    }
+    &__placeholder {
+      color: rgba(0, 0, 0, 0.4);
     }
   }
   #{$control-class} {
@@ -96,5 +118,13 @@ export default defineComponent({
     right: 14rem;
     transform: translateY(-50%);
     color: #00A3FF;
+  }
+  #{$active-class} {
+    #{$control-class} {
+        border: 1px solid #00A3FF;
+    }
+    #{$arrow-class} {
+      transform: translateY(-50%) rotate(180deg);
+    }
   }
 </style>
